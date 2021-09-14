@@ -3,7 +3,7 @@ import './src/boilerplate.polyfill';
 import { SnakeNamingStrategy } from './src/snake-naming.strategy';
 
 module.exports = {
-  type: 'postgres',
+  type: 'mysql',
   host: process.env.DB_HOST,
   port: +process.env.DB_PORT,
   username: process.env.DB_USERNAME,
@@ -11,5 +11,6 @@ module.exports = {
   database: process.env.DB_DATABASE,
   namingStrategy: new SnakeNamingStrategy(),
   entities: ['src/modules/**/*.entity{.ts,.js}'],
+  synchronize: true, // not safe for production
   migrations: ['src/migrations/*{.ts,.js}'],
 };

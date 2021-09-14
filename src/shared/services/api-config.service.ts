@@ -90,7 +90,7 @@ export class ApiConfigService {
       entities,
       migrations,
       keepConnectionAlive: true,
-      type: 'postgres',
+      type: 'mysql',
       host: this.getString('DB_HOST'),
       port: this.getNumber('DB_PORT'),
       username: this.getString('DB_USERNAME'),
