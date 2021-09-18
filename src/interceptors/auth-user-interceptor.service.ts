@@ -1,7 +1,7 @@
 import type {
-  CallHandler,
-  ExecutionContext,
-  NestInterceptor,
+    CallHandler,
+    ExecutionContext,
+    NestInterceptor,
 } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 
@@ -10,12 +10,12 @@ import { ContextProvider } from '../providers/context.provider';
 
 @Injectable()
 export class AuthUserInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler) {
-    const request = context.switchToHttp().getRequest();
+    intercept(context: ExecutionContext, next: CallHandler) {
+        const response = context.switchToHttp().getResponse();
 
-    const user = <UserEntity>request.user;
-    ContextProvider.setAuthUser(user);
+        const user = <UserEntity>response.user;
+        ContextProvider.setAuthUser(user);
 
-    return next.handle();
-  }
+        return next.handle();
+    }
 }

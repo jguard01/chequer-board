@@ -1,13 +1,13 @@
 import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
+    Body,
+    Controller,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Post,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
@@ -27,44 +27,44 @@ import { UserRegisterDto } from './dto/UserRegisterDto';
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
-  constructor(
-    public readonly userService: UserService,
-    public readonly authService: AuthService,
-  ) {}
+    constructor(
+        public readonly userService: UserService,
+        public readonly authService: AuthService,
+    ) { }
 
-  @Post('login')
-  @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({
-    type: LoginPayloadDto,
-    description: 'User info with access token',
-  })
-  async userLogin(
-    @Body() userLoginDto: UserLoginDto,
-  ): Promise<LoginPayloadDto> {
-    const userEntity = await this.authService.validateUser(userLoginDto);
-    const token = await this.authService.createToken(userEntity);
-    return new LoginPayloadDto(userEntity.toDto(), token);
-  }
+    @Post('login')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({
+        type: LoginPayloadDto,
+        description: 'User info with access token',
+    })
+    async userLogin(
+        @Body() userLoginDto: UserLoginDto,
+    ): Promise<LoginPayloadDto> {
+        const userEntity = await this.authService.validateUser(userLoginDto);
+        const token = await this.authService.createToken(userEntity);
+        return new LoginPayloadDto(userEntity.toDto(), token);
+    }
 
-  @Post('register')
-  @HttpCode(HttpStatus.OK)
-  @ApiOkResponse({ type: UserDto, description: 'Successfully Registered' })
-  async userRegister(
-    @Body() userRegisterDto: UserRegisterDto,
-    @UploadedFile() file: IFile,
-  ): Promise<UserDto> {
-    const createdUser = await this.userService.createUser(userRegisterDto);
+    @Post('register')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({ type: UserDto, description: 'Successfully Registered' })
+    async userRegister(
+        @Body() userRegisterDto: UserRegisterDto,
+        @UploadedFile() file: IFile,
+    ): Promise<UserDto> {
+        const createdUser = await this.userService.createUser(userRegisterDto);
 
-    return createdUser.toDto<typeof UserDto>();
-  }
+        return createdUser.toDto<typeof UserDto>();
+    }
 
-  @Get('me')
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
-  @UseInterceptors(AuthUserInterceptor)
-  @ApiBearerAuth()
-  @ApiOkResponse({ type: UserDto, description: 'current user info' })
-  getCurrentUser(@AuthUser() user: UserEntity): UserDto {
-    return user.toDto();
-  }
+    @Get('me')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(AuthGuard)
+    @UseInterceptors(AuthUserInterceptor)
+    @ApiBearerAuth()
+    @ApiOkResponse({ type: UserDto, description: 'current user info' })
+    getCurrentUser(@AuthUser() user: UserEntity): UserDto {
+        return user.toDto();
+    }
 }

@@ -5,66 +5,72 @@ import type { PageDto } from '../../common/dto/page.dto';
 import type { PostDto } from './dto/PostDto';
 import type { PostUpdateDto } from './dto/PostUpdate.dto';
 import { PostCreateDto } from './dto/PostCreate.dto';
-import type { PostEntity } from './post.entity';
+import { PostEntity } from './post.entity';
 import { PostRepository } from './post.repository';
+import { AuthUser } from '../../decorators/auth-user.decorator';
+import { UserDto } from '../../modules/user/dto/user-dto';
 
 @Injectable()
 export class PostService {
-  constructor(
-    public readonly PostRepository: PostRepository,
-  ) {}
+    constructor(
+        public readonly PostRepository: PostRepository,
+    ) { }
 
-  async createPost(
-    PostCreateDto: PostCreateDto,
-  ): Promise<PostEntity> {
-    const user = this.PostRepository.create(PostCreateDto);
-    return this.PostRepository.save(user);
-  }
+    async createPost(
+        PostCreateDto: PostCreateDto,
+        user: UserDto
+    ): Promise<PostEntity> {
+        console.log("createPost=", PostEntity)
+        const post = this.PostRepository.create(PostCreateDto);
+        post.createdBy = user.id;
+        console.log(">>>>>>>>>>", user);
+        return this.PostRepository.save(post);
+    }
 
-  
-//   async getUsers(
-//     pageOptionsDto: UsersPageOptionsDto,
-//   ): Promise<PageDto<UserDto>> {
-//     const queryBuilder = this.userRepository.createQueryBuilder('user');
-//     const { items, pageMetaDto } = await queryBuilder.paginate(pageOptionsDto);
 
-//     return items.toPageDto(pageMetaDto);
-//   }
+    //   async getUsers(
+    //     pageOptionsDto: UsersPageOptionsDto,
+    //   ): Promise<PageDto<UserDto>> {
+    //     const queryBuilder = this.userRepository.createQueryBuilder('user');
+    //     const { items, pageMetaDto } = await queryBuilder.paginate(pageOptionsDto);
 
-//   async getUser(userId: string): Promise<PostEntity> {
-//     const queryBuilder = this.userRepository.createQueryBuilder('user');
+    //     return items.toPageDto(pageMetaDto);
+    //   }
 
-//     queryBuilder.where('user.id = :userId', { userId });
+    //   async getUser(userId: string): Promise<PostEntity> {
+    //     const queryBuilder = this.userRepository.createQueryBuilder('user');
 
-//     const userEntity = await queryBuilder.getOne();
+    //     queryBuilder.where('user.id = :userId', { userId });
 
-//     return userEntity.toDto();
-//   }
+    //     const userEntity = await queryBuilder.getOne();
 
-  /**
-   * Find single user
-   */
-//   findOne(findData: FindConditions<PostEntity>): Promise<PostEntity> {
-//     return this.userRepository.findOne(findData);
-//   }
-//   async findByUsernameOrId(
-//     options: Partial<{ username: string; userId: string }>,
-//   ): Promise<PostEntity | undefined> {
-//     const queryBuilder = this.userRepository.createQueryBuilder('user');
+    //     return userEntity.toDto();
+    //   }
 
-//     if (options.userId) {
-//       queryBuilder.orWhere('user.userId = :userId', {
-//         userId: options.userId,
-//       });
-//     }
-//     if (options.username) {
-//       queryBuilder.orWhere('user.username = :username', {
-//         username: options.username,
-//       });
-//     }
+    /**
+     * Find single user
+     */
+    //   findOne(findData: FindConditions<PostEntity>): Promise<PostEntity> {
+    //     return this.userRepository.findOne(findData);
+    //   }
+    //   async findByUsernameOrId(
+    //     options: Partial<{ username: string; userId: string }>,
+    //   ): Promise<PostEntity | undefined> {
+    //     const queryBuilder = this.userRepository.createQueryBuilder('user');
 
-//     return queryBuilder.getOne();
-//   }
+    //     if (options.userId) {
+    //       queryBuilder.orWhere('user.userId = :userId', {
+    //         userId: options.userId,
+    //       });
+    //     }
+    //     if (options.username) {
+    //       queryBuilder.orWhere('user.username = :username', {
+    //         username: options.username,
+    //       });
+    //     }
+
+    //     return queryBuilder.getOne();
+    //   }
 
 
 }

@@ -26,7 +26,7 @@ export class UtilsProvider {
     if (Array.isArray(entity)) {
       return entity.map((u) => new model(u, options));
     }
-
+    console.log(entity);
     return new model(entity, options);
   }
 

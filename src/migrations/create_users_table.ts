@@ -10,7 +10,6 @@ export class CreateUsersTable1622299665807 implements MigrationInterface {
     await queryRunner.query(`CREATE TABLE users
                                  (
                                      id        VARCHAR(50),
-                                     user_id   VARCHAR(100),
                                      created_at TIMESTAMP NOT NULL DEFAULT now(),
                                      updated_at TIMESTAMP NOT NULL DEFAULT now(),
                                      fullname  VARCHAR(100),
@@ -19,7 +18,7 @@ export class CreateUsersTable1622299665807 implements MigrationInterface {
                                      password   VARCHAR(100),
                                      phone      VARCHAR(100),
                                      CONSTRAINT UC_username UNIQUE (username),
-                                     CONSTRAINT PK_userid PRIMARY KEY (user_id)
+                                     PRIMARY KEY (id)
                                  )`);
   }
 //   id         uuid              NOT NULL DEFAULT uuid_generate_v4(),

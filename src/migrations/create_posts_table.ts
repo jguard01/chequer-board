@@ -6,14 +6,16 @@ export class CreatePostsTable1622299665807 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`CREATE TABLE posts
                                  (
-                                     post_id   INT AUTO_INCREMENT,
+                                     post_id   INT AUTO_INCREMENT primary key NOT NULL,
                                      created_at TIMESTAMP NOT NULL DEFAULT now(),
                                      updated_at TIMESTAMP NOT NULL DEFAULT now(),
                                      title  VARCHAR(100),
                                      description  TEXT,
+                                     created_by  VARCHAR(50),
                                      views      INT,
                                      deleted      INT,
-                                     CONSTRAINT PK_postid PRIMARY KEY (post_id)
+                                     FOREIGN KEY(created_by)
+                                     REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
                                  )`);
   }
 //   id         uuid              NOT NULL DEFAULT uuid_generate_v4(),

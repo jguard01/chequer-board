@@ -26,7 +26,7 @@ export class UserService {
   findOne(findData: FindConditions<UserEntity>): Promise<UserEntity> {
     return this.userRepository.findOne(findData);
   }
-  async findByUsernameOrId(
+  async findByUsername(
     options: Partial<{ username: string; userId: string }>,
   ): Promise<UserEntity | undefined> {
     const queryBuilder = this.userRepository.createQueryBuilder('user');
@@ -34,11 +34,6 @@ export class UserService {
     if (options.userId) {
       queryBuilder.orWhere('user.userId = :userId', {
         userId: options.userId,
-      });
-    }
-    if (options.username) {
-      queryBuilder.orWhere('user.username = :username', {
-        username: options.username,
       });
     }
 

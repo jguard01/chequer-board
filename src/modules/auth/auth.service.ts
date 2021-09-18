@@ -26,7 +26,7 @@ export class AuthService {
   }
 
   async validateUser(userLoginDto: UserLoginDto): Promise<UserEntity> {
-    const user = await this.userService.findByUsernameOrId({username: userLoginDto.username, userId: userLoginDto.userId});
+    const user = await this.userService.findByUsername({username: userLoginDto.username});
     const isPasswordValid = await UtilsProvider.validateHash(
       userLoginDto.password,
       user?.password,

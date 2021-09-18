@@ -5,13 +5,13 @@ import type { UserEntity } from '../user.entity';
 
 export class UserDto extends AbstractDto {
   @ApiPropertyOptional()
-  userId: string;
+  id : string;
+  
+  @ApiPropertyOptional()
+  username: string;
 
   @ApiPropertyOptional()
   password: string;
-
-  @ApiPropertyOptional()
-  username: string;
 
   @ApiPropertyOptional()
   fullname: string;

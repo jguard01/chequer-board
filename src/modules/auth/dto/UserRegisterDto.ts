@@ -17,12 +17,6 @@ export class UserRegisterDto {
   @IsString()
   @IsNotEmpty()
   @Trim()
-  readonly userId: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  @Trim()
   readonly username: string;
 
   @ApiProperty()

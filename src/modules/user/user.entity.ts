@@ -7,14 +7,14 @@ import { UserDto } from './dto/user-dto';
 
 @Entity({ name: 'users' })
 export class UserEntity extends AbstractEntity<UserDto> {
-  @Column()
-  userId: string;
-
-  @Column({ nullable: false })
-  password: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ nullable: false })
   username: string;
+
+  @Column({ nullable: false })
+  password: string;
 
   @Column({ nullable: true })
   fullname: string;
@@ -24,5 +24,6 @@ export class UserEntity extends AbstractEntity<UserDto> {
 
   @Column({ nullable: false })
   phone: string;
+  
   dtoClass = UserDto;
 }
