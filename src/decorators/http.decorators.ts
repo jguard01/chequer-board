@@ -12,13 +12,13 @@ import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 import type { RoleType } from '../common/constants/role-type';
 import { AuthGuard } from '../guards/auth.guard';
-import { RolesGuard } from '../guards/roles.guard';
+// import { RolesGuard } from '../guards/roles.guard';
 import { AuthUserInterceptor } from '../interceptors/auth-user-interceptor.service';
 
 export function Auth(...roles: RoleType[]) {
   return applyDecorators(
     SetMetadata('roles', roles),
-    UseGuards(AuthGuard, RolesGuard),
+    // UseGuards(AuthGuard, RolesGuard),
     ApiBearerAuth(),
     UseInterceptors(AuthUserInterceptor),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),

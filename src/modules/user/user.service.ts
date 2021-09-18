@@ -26,6 +26,7 @@ export class UserService {
   findOne(findData: FindConditions<UserEntity>): Promise<UserEntity> {
     return this.userRepository.findOne(findData);
   }
+<<<<<<< HEAD
   async findByUsernameOrEmail(
     options: Partial<{ username: string; email: string }>,
   ): Promise<UserEntity | undefined> {
@@ -34,6 +35,16 @@ export class UserService {
     if (options.email) {
       queryBuilder.orWhere('user.email = :email', {
         email: options.email,
+=======
+  async findByUsernameOrId(
+    options: Partial<{ username: string; userId: string }>,
+  ): Promise<UserEntity | undefined> {
+    const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+    if (options.userId) {
+      queryBuilder.orWhere('user.userId = :userId', {
+        userId: options.userId,
+>>>>>>> login and register without timestamp
       });
     }
     if (options.username) {
@@ -47,18 +58,8 @@ export class UserService {
 
   async createUser(
     userRegisterDto: UserRegisterDto,
-    file: IFile,
   ): Promise<UserEntity> {
     const user = this.userRepository.create(userRegisterDto);
-
-    if (file && !this.validatorService.isImage(file.mimetype)) {
-      throw new FileNotImageException();
-    }
-
-    if (file) {
-      user.avatar = await this.awsS3Service.uploadImage(file);
-    }
-
     return this.userRepository.save(user);
   }
 

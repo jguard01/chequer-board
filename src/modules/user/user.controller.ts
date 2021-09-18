@@ -26,21 +26,21 @@ export class UserController {
     private readonly translationService: TranslationService,
   ) {}
 
-  @Get('admin')
-  @Auth(RoleType.USER)
-  @HttpCode(HttpStatus.OK)
-  async admin(@AuthUser() user: UserEntity): Promise<string> {
-    const translation = await this.translationService.translate(
-      'keywords.admin',
-      {
-        lang: 'en',
-      },
-    );
-    return `${translation} ${user.firstName}`;
-  }
+//   @Get('admin')
+//   @Auth(RoleType.USER)
+//   @HttpCode(HttpStatus.OK)
+//   async admin(@AuthUser() user: UserEntity): Promise<string> {
+//     const translation = await this.translationService.translate(
+//       'keywords.admin',
+//       {
+//         lang: 'en',
+//       },
+//     );
+//     return `${translation} ${user.firstName}`;
+//   }
 
   @Get()
-  @Auth(RoleType.USER)
+//   @Auth(RoleType.USER)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,

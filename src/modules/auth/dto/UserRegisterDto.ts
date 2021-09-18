@@ -22,7 +22,7 @@ export class UserRegisterDto {
   @IsString()
   @IsNotEmpty()
   @Trim()
-  readonly lastName: string;
+  readonly fullname: string;
 
   @ApiProperty()
   @IsString()

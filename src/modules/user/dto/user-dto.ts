@@ -1,42 +1,33 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-
-import { RoleType } from '../../../common/constants/role-type';
+import { IsEmail, IsString } from 'class-validator';
 import { AbstractDto } from '../../../common/dto/abstract.dto';
 import type { UserEntity } from '../user.entity';
 
 export class UserDto extends AbstractDto {
   @ApiPropertyOptional()
-  firstName: string;
+  userId: string;
 
   @ApiPropertyOptional()
-  lastName: string;
+  password: string;
 
   @ApiPropertyOptional()
   username: string;
 
-  @ApiPropertyOptional({ enum: RoleType })
-  role: RoleType;
+  @ApiPropertyOptional()
+  fullname: string;
 
   @ApiPropertyOptional()
   email: string;
 
   @ApiPropertyOptional()
-  avatar: string;
-
-  @ApiPropertyOptional()
   phone: string;
 
-  @ApiPropertyOptional()
-  isActive: boolean;
-
-  constructor(user: UserEntity, options?: Partial<{ isActive: boolean }>) {
+  constructor(user: UserEntity) {
     super(user);
-    this.firstName = user.firstName;
-    this.lastName = user.lastName;
-    this.role = user.role;
+    this.fullname = user.fullname;
+    this.username = user.username;
+    this.password = user.password;
     this.email = user.email;
-    this.avatar = user.avatar;
     this.phone = user.phone;
-    this.isActive = options?.isActive;
   }
 }
