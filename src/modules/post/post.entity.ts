@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserEntity } from '../../modules/user/user.entity';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { AbstractEntity } from '../../common/abstract.entity';
 import { PostDto } from './dto/PostDto';
@@ -21,7 +22,14 @@ export class PostEntity extends AbstractEntity<PostDto> {
     views: number = 0;
 
     @Column({ nullable: false })
-    deleted: boolean;
+    deleted: boolean = false;
+
+    @ManyToOne(() => UserEntity, { nullable: false })
+    @JoinColumn({
+        name: "created_by",
+        referencedColumnName: "id"
+    })
+    user: UserEntity;
 
     dtoClass = PostDto;
 }

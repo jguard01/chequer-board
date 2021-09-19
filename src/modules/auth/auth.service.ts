@@ -1,39 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
-import { UserNotFoundException } from '../../exceptions/user-not-found.exception';
-import { UtilsProvider } from '../../providers/utils.provider';
-import { ApiConfigService } from '../../shared/services/api-config.service';
-import type { UserDto } from '../user/dto/user-dto';
-import type { UserEntity } from '../user/user.entity';
-import { UserService } from '../user/user.service';
-import { TokenPayloadDto } from './dto/TokenPayloadDto';
-import type { UserLoginDto } from './dto/UserLoginDto';
+import { Hash } from '../../utils/Hash';
+import { ConfigService } from './../../config';
+import { UserService } from './../user/user.service';
+import { UserEntity } from './../user/user.entity'
+import { UserLoginDto } from './dto/UserLoginDto';
+import { LoginPayloadDto } from '.';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    public readonly jwtService: JwtService,
-    public readonly configService: ApiConfigService,
-    public readonly userService: UserService,
-  ) {}
+    constructor(
+        private readonly jwtService: JwtService,
+        private readonly configService: ConfigService,
+        private readonly userService: UserService,
+    ) { }
 
-  async createToken(user: UserEntity | UserDto): Promise<TokenPayloadDto> {
-    return new TokenPayloadDto({
-      expiresIn: this.configService.authConfig.jwtExpirationTime,
-      accessToken: await this.jwtService.signAsync({ id: user.id }),
-    });
-  }
+    async createToken(user: UserEntity): Promise<LoginPayloadDto> {
+        const expiresTime: number = Number(this.configService.get('JWT_EXPIRATION_TIME'));
+        const expiresIn = new Date();
 
-  async validateUser(userLoginDto: UserLoginDto): Promise<UserEntity> {
-    const user = await this.userService.findByUsername({username: userLoginDto.username});
-    const isPasswordValid = await UtilsProvider.validateHash(
-      userLoginDto.password,
-      user?.password,
-    );
-    if (!user || !isPasswordValid) {
-      throw new UserNotFoundException();
+        expiresIn.setTime(expiresIn.getTime() + expiresTime);
+        return {
+            token: {
+                expiresIn,
+                accessToken: this.jwtService.sign({ id: user.id }),
+            },
+            user,
+        };
     }
-    return user;
-  }
+
+    async validateUser(payload: UserLoginDto): Promise<any> {
+        const user = await this.userService.findByUsername(payload.username);
+        if (!user || !Hash.compare(payload.password, user.password)) {
+            throw new UnauthorizedException('Invalid credentials!');
+        }
+        return user;
+    }
 }
