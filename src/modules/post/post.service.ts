@@ -13,6 +13,7 @@ import { UserDto } from '../../modules/user/dto/user-dto';
 import { UserEntity } from '../../modules/user/user.entity';
 import { PostsPageOptionDto } from './dto/posts-page-options.dto';
 import { PostDeleteDto } from './dto/PostDelete.dto';
+import { PageMetaDto } from '../../common/dto/page-meta.dto';
 
 @Injectable()
 export class PostService {
@@ -79,17 +80,23 @@ export class PostService {
 
 
     async getPostList(
+        // pageMetaDto: PageMetaDto,
         pageOptionsDto: PostsPageOptionDto,
+        // pageNum: number,
     ): Promise<PageDto<PostListDto>> {
-        const finder = await this.PostRepository.find({
+        const [finder, count] = await this.PostRepository.findAndCount({
             select: ["postId", "title", "createdBy", "views"],
             where: {
                 deleted: false
-            }
+            },
+            skip: pageOptionsDto.skip,
+            take: pageOptionsDto.take,
         });
         console.log(finder);
-        const queryBuilder = this.PostRepository.createQueryBuilder('post').where('post.deleted = false')
-        const { items, pageMetaDto } = await queryBuilder.paginate(pageOptionsDto);
+        console.log("count = ", count);
+        // const queryBuilder = this.PostRepository.createQueryBuilder('post').where('post.deleted = false')
+        // const { items, pageMetaDto } = await queryBuilder.paginate(pageOptionsDto);
+        const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount: count });
         return finder.toPageDto(pageMetaDto)
     }
 }

@@ -34,6 +34,8 @@ import { PostsPageOptionDto } from './dto/posts-page-options.dto'
 import { PostUpdateDto } from './dto/PostUpdate.dto';
 import { PostDeleteDto } from './dto/PostDelete.dto';
 import { PrimaryGeneratedColumn } from 'typeorm';
+import { PageMetaDto } from '../../common/dto/page-meta.dto';
+import { PageOptionsDto } from '../../common/dto/page-options.dto';
 
 @Controller('post')
 @ApiTags('post')
@@ -110,11 +112,14 @@ export class PostController {
     @HttpCode(HttpStatus.OK)
     @ApiResponse({ type: PageDto, description: 'Successfully' })
     async PostLists(
-        @Query(new ValidationPipe({ transform: true }))
-        pageOptionsDto: PostsPageOptionDto,
+        // @Query(new ValidationPipe({ transform: true }))
+        // pageMetaDto: PageMetaDto,
+        // pageOptionsDto: PostsPageOptionDto,
         @Query('page') PageNum: number,
     ): Promise<PageDto<PostListDto>> {
-        console.log("Page = ", PageNum);
+        // return await this.postService.getPostList(pageMetaDto, pageOptionsDto, PageNum - 1);
+        const pageOptionsDto = new PageOptionsDto();
+        pageOptionsDto.page = PageNum;
         return await this.postService.getPostList(pageOptionsDto);
     }
 }
