@@ -33,7 +33,7 @@ export class AuthController {
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     async register(@Body() payload: UserRegisterDto): Promise<any> {
         const user = await this.userService.createUser(payload);
-        return await this.authService.createToken(user);
+        return user.toDto();
     }
 
     @ApiBearerAuth()

@@ -3,13 +3,16 @@ import type { FindConditions } from 'typeorm';
 
 import type { PageDto } from '../../common/dto/page.dto';
 import type { PostDto } from './dto/PostDto';
-import type { PostUpdateDto } from './dto/PostUpdate.dto';
+import { PostUpdateDto } from './dto/PostUpdate.dto';
+import { PostListDto } from './dto/PostListPayload.dto';
 import { PostCreateDto } from './dto/PostCreate.dto';
 import { PostEntity } from './post.entity';
 import { PostRepository } from './post.repository';
 import { AuthUser } from '../../decorators/auth-user.decorator';
 import { UserDto } from '../../modules/user/dto/user-dto';
 import { UserEntity } from '../../modules/user/user.entity';
+import { PostsPageOptionDto } from './dto/posts-page-options.dto';
+import { PostDeleteDto } from './dto/PostDelete.dto';
 
 @Injectable()
 export class PostService {
@@ -22,7 +25,7 @@ export class PostService {
         user: UserDto
     ): Promise<PostEntity> {
         const post = this.PostRepository.create(PostCreateDto);
-        post.createdBy = user.id;
+        post.createdBy = user.id
 
         return this.PostRepository.save(post);
     }
@@ -43,4 +46,45 @@ export class PostService {
         return post;
     }
 
+    async deletePost(
+        postDelete: PostDeleteDto,
+        user: UserEntity
+    ): Promise<PostEntity> {
+        const post = await this.PostRepository.findOne(postDelete.id, {
+            relations: ['user'],
+        });
+        if (post.user.id === user.id && post.deleted == false) {
+            const retPost = this.PostRepository.update(postDelete.id, {
+                deleted: true,
+            });
+        }
+        return post;
+    }
+
+    async updatePost(
+        user: UserEntity,
+        postUpdate: PostUpdateDto
+    ): Promise<PostEntity> {
+        const post = await this.PostRepository.findOne(postUpdate.id, {
+            relations: ['user'],
+        });
+        if (post.user.id === user.id && post.deleted == false) {
+            await this.PostRepository.update(postUpdate.id, {
+                title: postUpdate.title,
+                description: postUpdate.description,
+            });
+        }
+        return post;
+    }
+
+
+    async getPostList(
+        pageOptionsDto: PostsPageOptionDto,
+    ): Promise<PageDto<PostListDto>> {
+        const queryBuilder = this.PostRepository.createQueryBuilder('post');
+        const { items, pageMetaDto } = await queryBuilder.paginate(pageOptionsDto);
+        items.toDtos<PostEntity, PostListDto>();
+        console.log(items)
+        return items.toPageDto(pageMetaDto);
+    }
 }
