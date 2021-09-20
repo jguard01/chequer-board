@@ -33,6 +33,7 @@ import { PageDto } from '../../common/dto/page.dto';
 import { PostsPageOptionDto } from './dto/posts-page-options.dto'
 import { PostUpdateDto } from './dto/PostUpdate.dto';
 import { PostDeleteDto } from './dto/PostDelete.dto';
+import { PrimaryGeneratedColumn } from 'typeorm';
 
 @Controller('post')
 @ApiTags('post')
@@ -62,9 +63,15 @@ export class PostController {
     async postUpdate(
         @CurrentUser() user: UserEntity,
         @Body() postUpdateDto: PostUpdateDto
-    ): Promise<PostDto> {
+    ): Promise<boolean> {
         const updatedPost = await this.postService.updatePost(user, postUpdateDto);
-        return updatedPost.toDto<typeof PostDto>();
+        if (updatedPost !== undefined) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
     }
 
     @ApiBearerAuth()
@@ -75,9 +82,14 @@ export class PostController {
     async postCreate(
         @Body() postDeleteDto: PostDeleteDto,
         @CurrentUser() user: UserEntity,
-    ): Promise<PostDto> {
+    ): Promise<boolean> {
         const deletePost = await this.postService.deletePost(postDeleteDto, user);
-        return deletePost.toDto<typeof PostDto>();
+        if (deletePost !== undefined) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     @ApiBearerAuth()
@@ -100,8 +112,9 @@ export class PostController {
     async PostLists(
         @Query(new ValidationPipe({ transform: true }))
         pageOptionsDto: PostsPageOptionDto,
+        @Query('page') PageNum: number,
     ): Promise<PageDto<PostListDto>> {
-
+        console.log("Page = ", PageNum);
         return await this.postService.getPostList(pageOptionsDto);
     }
 }

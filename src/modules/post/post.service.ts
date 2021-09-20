@@ -81,10 +81,15 @@ export class PostService {
     async getPostList(
         pageOptionsDto: PostsPageOptionDto,
     ): Promise<PageDto<PostListDto>> {
-        const queryBuilder = this.PostRepository.createQueryBuilder('post');
+        const finder = await this.PostRepository.find({
+            select: ["postId", "title", "createdBy", "views"],
+            where: {
+                deleted: false
+            }
+        });
+        console.log(finder);
+        const queryBuilder = this.PostRepository.createQueryBuilder('post').where('post.deleted = false')
         const { items, pageMetaDto } = await queryBuilder.paginate(pageOptionsDto);
-        items.toDtos<PostEntity, PostListDto>();
-        console.log(items)
-        return items.toPageDto(pageMetaDto);
+        return finder.toPageDto(pageMetaDto)
     }
 }
