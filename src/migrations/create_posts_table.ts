@@ -1,10 +1,10 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreatePostsTable1622299665807 implements MigrationInterface {
-  name = 'createPostsTable1622299665807';
+    name = 'createPostsTable1622299665807';
 
-  public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`CREATE TABLE posts
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE TABLE posts
                                  (
                                      post_id   INT AUTO_INCREMENT primary key NOT NULL,
                                      created_at TIMESTAMP NOT NULL DEFAULT now(),
@@ -17,11 +17,9 @@ export class CreatePostsTable1622299665807 implements MigrationInterface {
                                      FOREIGN KEY(created_by)
                                      REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
                                  )`);
-  }
-//   id         uuid              NOT NULL DEFAULT uuid_generate_v4(),
-// 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP TABLE posts');
-    // await queryRunner.query('DROP TYPE "users_role_enum"');
-  }
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query('DROP TABLE posts');
+    }
 }

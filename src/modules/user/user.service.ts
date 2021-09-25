@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import type { FindConditions } from 'typeorm';
 
 import type { PageDto } from '../../common/dto/page.dto';
@@ -45,8 +45,16 @@ export class UserService {
     async createUser(
         userRegisterDto: UserRegisterDto,
     ): Promise<UserEntity> {
-        const user = this.userRepository.create(userRegisterDto);
-        return this.userRepository.save(user);
+        if (6 > (userRegisterDto.password.length)) {
+            throw new HttpException('Password is longer than 6 characters', 401);
+        }
+        try {
+            const user = this.userRepository.create(userRegisterDto);
+            return this.userRepository.save(user);
+        }
+        catch (error) {
+            throw new HttpException('Username is Duplicated', 500);
+        }
     }
 
     async getUsers(
@@ -68,3 +76,4 @@ export class UserService {
         return userEntity.toDto();
     }
 }
+

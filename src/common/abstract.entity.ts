@@ -8,8 +8,7 @@ import { UtilsProvider } from '../providers/utils.provider';
 import type { AbstractDto } from './dto/abstract.dto';
 
 export abstract class AbstractEntity<DTO extends AbstractDto = AbstractDto> {
-    //   @PrimaryGeneratedColumn('uuid')
-    //   id: string;
+
 
     @CreateDateColumn({
         name: 'created_at',

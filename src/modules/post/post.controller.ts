@@ -11,6 +11,7 @@ import {
     UseGuards,
     UseInterceptors,
     ValidationPipe,
+    UseFilters,
 
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -18,9 +19,6 @@ import { ApiBearerAuth, ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swag
 import { PostDto } from './dto/PostDto';
 import { PostEntity } from './post.entity';
 import { PostService } from './post.service';
-// import { AuthService } from './auth.service';
-// import { LoginPayloadDto } from './dto/LoginPayloadDto';
-// import { UserLoginDto } from './dto/UserLoginDto';
 import { PostCreateDto } from './dto/PostCreate.dto';
 import { PostListDto } from './dto/PostListPayload.dto';
 import { UserDto } from '../../modules/user/dto/user-dto';
@@ -36,9 +34,12 @@ import { PostDeleteDto } from './dto/PostDelete.dto';
 import { PrimaryGeneratedColumn } from 'typeorm';
 import { PageMetaDto } from '../../common/dto/page-meta.dto';
 import { PageOptionsDto } from '../../common/dto/page-options.dto';
+import { bool } from 'aws-sdk/clients/signer';
+import { PostHttpExceptionFilter } from '../exception/PostHttpExceptionFilter';
 
 @Controller('post')
 @ApiTags('post')
+@UseFilters(new PostHttpExceptionFilter())
 export class PostController {
     constructor(
         public readonly postService: PostService,
@@ -52,46 +53,40 @@ export class PostController {
     async postDelete(
         @Body() postCreateDto: PostCreateDto,
         @CurrentUser() user: UserEntity
-    ): Promise<PostDto> {
-        const createdPost = await this.postService.createPost(postCreateDto, user);
-        return createdPost.toDto<typeof PostDto>();
-    }
-
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard())
-    @Post('update')
-    @HttpCode(HttpStatus.OK)
-    @ApiOkResponse({ type: PostDto, description: 'Successfully Created' })
-    async postUpdate(
-        @CurrentUser() user: UserEntity,
-        @Body() postUpdateDto: PostUpdateDto
     ): Promise<boolean> {
-        const updatedPost = await this.postService.updatePost(user, postUpdateDto);
-        if (updatedPost !== undefined) {
+        const createdPost = await this.postService.createPost(postCreateDto, user);
+        if (createdPost !== undefined) {
             return true;
         }
         else {
             return false;
         }
+    }
 
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    @Patch('update')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({ type: PostDto, description: 'Successfully Updated' })
+    async postUpdate(
+        @CurrentUser() user: UserEntity,
+        @Body() postUpdateDto: PostUpdateDto
+    ): Promise<boolean> {
+        const updatedPostResult = await this.postService.updatePost(user, postUpdateDto);
+        return updatedPostResult;
     }
 
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
     @Post('delete')
     @HttpCode(HttpStatus.OK)
-    @ApiOkResponse({ type: PostDto, description: 'Successfully Created' })
+    @ApiOkResponse({ type: PostDto, description: 'Successfully Deleted' })
     async postCreate(
         @Body() postDeleteDto: PostDeleteDto,
         @CurrentUser() user: UserEntity,
     ): Promise<boolean> {
-        const deletePost = await this.postService.deletePost(postDeleteDto, user);
-        if (deletePost !== undefined) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        const deletePostResult = await this.postService.deletePost(postDeleteDto, user);
+        return deletePostResult;
     }
 
     @ApiBearerAuth()
@@ -108,18 +103,16 @@ export class PostController {
         return createdPost.toDto<typeof PostDto>();
     }
 
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
     @Get('list')
     @HttpCode(HttpStatus.OK)
     @ApiResponse({ type: PageDto, description: 'Successfully' })
     async PostLists(
-        // @Query(new ValidationPipe({ transform: true }))
-        // pageMetaDto: PageMetaDto,
-        // pageOptionsDto: PostsPageOptionDto,
         @Query('page') PageNum: number,
     ): Promise<PageDto<PostListDto>> {
-        // return await this.postService.getPostList(pageMetaDto, pageOptionsDto, PageNum - 1);
         const pageOptionsDto = new PageOptionsDto();
-        pageOptionsDto.page = PageNum;
+        pageOptionsDto.page = PageNum || 1;
         return await this.postService.getPostList(pageOptionsDto);
     }
 }

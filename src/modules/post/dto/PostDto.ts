@@ -1,6 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsString } from 'class-validator';
 import { AbstractDto } from '../../../common/dto/abstract.dto';
+import { UserDto } from '../../user/dto/user-dto';
+import { UserEntity } from '../../user/user.entity';
 import type { PostEntity } from '../post.entity';
 
 export class PostDto extends AbstractDto {
@@ -22,6 +24,9 @@ export class PostDto extends AbstractDto {
     @ApiPropertyOptional()
     deleted: boolean;
 
+    @ApiPropertyOptional()
+    user: UserDto;
+
     constructor(post: PostEntity) {
         super(post);
         this.postId = post.postId;
@@ -31,5 +36,6 @@ export class PostDto extends AbstractDto {
         this.views = post.views;
         this.deleted = post.deleted;
         this.createdAt = post.createdAt;
+        this.user = post.user.toDto();
     }
 }

@@ -4,30 +4,27 @@ import { AbstractDto } from '../../../common/dto/abstract.dto';
 import type { UserEntity } from '../user.entity';
 
 export class UserDto extends AbstractDto {
-  @ApiPropertyOptional()
-  id : string;
-  
-  @ApiPropertyOptional()
-  username: string;
+    @ApiPropertyOptional()
+    id: string;
 
-  @ApiPropertyOptional()
-  password: string;
+    @ApiPropertyOptional()
+    username: string;
 
-  @ApiPropertyOptional()
-  fullname: string;
+    @ApiPropertyOptional()
+    fullname: string;
 
-  @ApiPropertyOptional()
-  email: string;
+    @ApiPropertyOptional()
+    email: string;
 
-  @ApiPropertyOptional()
-  phone: string;
+    @ApiPropertyOptional()
+    phone: string;
 
-  constructor(user: UserEntity) {
-    super(user);
-    this.fullname = user.fullname;
-    this.username = user.username;
-    this.password = user.password;
-    this.email = user.email;
-    this.phone = user.phone;
-  }
+    constructor(user: UserEntity) {
+        super(user);
+        this.id = user.id;
+        this.username = user.username;
+        this.fullname = user.fullname;
+        this.email = user.email;
+        this.phone = user.phone;
+    }
 }

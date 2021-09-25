@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import type { FindConditions } from 'typeorm';
 
 import type { PageDto } from '../../common/dto/page.dto';
@@ -50,52 +50,59 @@ export class PostService {
     async deletePost(
         postDelete: PostDeleteDto,
         user: UserEntity
-    ): Promise<PostEntity> {
+    ): Promise<boolean> {
         const post = await this.PostRepository.findOne(postDelete.id, {
             relations: ['user'],
         });
-        if (post.user.id === user.id && post.deleted == false) {
+        if (post.user.id !== user.id && post.deleted !== false) {
+            throw new HttpException('user id is incorrect', 401);
+            return false
+        }
+        else {
             const retPost = this.PostRepository.update(postDelete.id, {
                 deleted: true,
             });
+            return true;
         }
-        return post;
     }
 
     async updatePost(
         user: UserEntity,
         postUpdate: PostUpdateDto
-    ): Promise<PostEntity> {
+    ): Promise<boolean> {
         const post = await this.PostRepository.findOne(postUpdate.id, {
             relations: ['user'],
         });
-        if (post.user.id === user.id && post.deleted == false) {
+        if (post.user.id !== user.id && post.deleted !== false) {
+            throw new HttpException('user id is incorrect', 401);
+            return false;
+        }
+        else {
             await this.PostRepository.update(postUpdate.id, {
                 title: postUpdate.title,
                 description: postUpdate.description,
             });
+            return true;
         }
-        return post;
+
     }
 
 
     async getPostList(
-        // pageMetaDto: PageMetaDto,
         pageOptionsDto: PostsPageOptionDto,
-        // pageNum: number,
     ): Promise<PageDto<PostListDto>> {
         const [finder, count] = await this.PostRepository.findAndCount({
-            select: ["postId", "title", "createdBy", "views"],
+            select: ["postId", "title", "views"],
+            relations: ['user'],
             where: {
                 deleted: false
             },
+            order: {
+                postId: "DESC",
+            },
             skip: pageOptionsDto.skip,
             take: pageOptionsDto.take,
-        });
-        console.log(finder);
-        console.log("count = ", count);
-        // const queryBuilder = this.PostRepository.createQueryBuilder('post').where('post.deleted = false')
-        // const { items, pageMetaDto } = await queryBuilder.paginate(pageOptionsDto);
+        });;
         const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount: count });
         return finder.toPageDto(pageMetaDto)
     }
