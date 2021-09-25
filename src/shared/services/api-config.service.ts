@@ -20,7 +20,7 @@ export class ApiConfigService {
     private getNumber(key: string, defaultValue?: number): number {
         const value = this.configService.get(key, defaultValue);
         if (value === undefined) {
-            throw new Error(key + ' env var not set');
+            throw new Error(key + ' env var not set'); // probably we should call process.exit() too to avoid locking the service
         }
         try {
             return Number(value);

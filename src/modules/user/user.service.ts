@@ -2,7 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import type { FindConditions } from 'typeorm';
 
 import type { PageDto } from '../../common/dto/page.dto';
-import { AwsS3Service } from '../../shared/services/aws-s3.service';
 import { ValidatorService } from '../../shared/services/validator.service';
 import type { UserRegisterDto } from '../auth/dto/UserRegisterDto';
 import type { UserDto } from './dto/user-dto';
@@ -15,13 +14,7 @@ export class UserService {
     constructor(
         public readonly userRepository: UserRepository,
         public readonly validatorService: ValidatorService,
-        public readonly awsS3Service: AwsS3Service,
     ) { }
-
-    /**
-     * Find single user
-     */
-
 
     findOne(findData: FindConditions<UserEntity>): Promise<UserEntity> {
         return this.userRepository.findOne(findData);

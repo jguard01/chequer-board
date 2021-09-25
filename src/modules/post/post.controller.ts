@@ -28,13 +28,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthUserInterceptor } from '../../interceptors/auth-user-interceptor.service';
 import { CurrentUser } from '../../modules/common/decorator/current-user.decorator';
 import { PageDto } from '../../common/dto/page.dto';
-import { PostsPageOptionDto } from './dto/posts-page-options.dto'
+
 import { PostUpdateDto } from './dto/PostUpdate.dto';
 import { PostDeleteDto } from './dto/PostDelete.dto';
-import { PrimaryGeneratedColumn } from 'typeorm';
-import { PageMetaDto } from '../../common/dto/page-meta.dto';
+
 import { PageOptionsDto } from '../../common/dto/page-options.dto';
-import { bool } from 'aws-sdk/clients/signer';
+
 import { PostHttpExceptionFilter } from '../exception/PostHttpExceptionFilter';
 
 @Controller('post')

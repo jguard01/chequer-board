@@ -4,27 +4,28 @@ volumes:
   db: # mount it internally instead of a folder. it avoids file lock problems
 
 services:
-  # app:
-  #   env_file:
-  #     - .env
-  #   container_name: hansel
-  #   restart: always
-  #   build: .
-  #   ports:
-  #     - "$PORT:$PORT"
-  #   links:
-  #     - mysql
+  app:
+    build: .
+    env_file:
+      - prod.env
+    links:
+      - mysql:$DB_HOST
+    depends_on:
+      - mysql
+    container_name: chequer-board
+    restart: always
+    ports:
+      - "$PORT:$PORT"
 
   mysql:
+    env_file:
+      - prod.env
     image: mysql:8
     restart: always
+    container_name: $DB_HOST
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: chequer_test
-    ports:
-      - "54321:3306"
-    cap_add:
-      - SYS_NICE  # CAP_SYS_NICE
+      MYSQL_ROOT_PASSWORD: $DB_PASSWORD
+      MYSQL_DATABASE: $DB_DATABASE
 
   # adminer:
   #   image: adminer
@@ -32,4 +33,4 @@ services:
   #   links:
   #     - mysql
   #   ports:
-  #     - "8081:8080" # to avoid conflicting the 8080 default for many cloud providers
+  #    - "8081:8080" # to avoid conflicting the 8080 default for many cloud providers
